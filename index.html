@@ -1,138 +1,377 @@
 <!doctype html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>rezzjournal — prototype</title>
-<style>
-:root{
- --emerald:#0F6B5B;--teal:#168C83;--brown:#6B4935;--cream:#F5EFE3;
- --beige:#D9CBB5;--paper:#FFFBF2;--ink:#3f3025;
-}
-*{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;background:var(--cream);color:var(--ink);font-family:Arial,sans-serif}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;background-image:radial-gradient(#8b765f 0.6px,transparent .6px);background-size:12px 12px}
-button,input,textarea{font:inherit}
-button{border:0}
-#leaf{position:fixed;pointer-events:none;z-index:99;font-size:22px;display:none}
-.shell{max-width:1180px;margin:auto;padding:20px}
-nav{position:sticky;top:14px;z-index:20;background:rgba(255,251,242,.9);backdrop-filter:blur(14px);border:1px solid var(--beige);border-radius:22px;padding:10px 14px;display:flex;align-items:center;gap:8px;box-shadow:0 12px 30px #6b49351c}
-.logo{font-family:"Brush Script MT",cursive;color:var(--emerald);font-size:30px;margin-right:auto}
-nav button{background:transparent;color:var(--brown);padding:9px 12px;border-radius:12px;cursor:pointer}
-nav button:hover{background:#dfeee8;color:var(--emerald)}
-.hero{min-height:650px;display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:45px;padding:55px 5%}
-.eyebrow{color:var(--teal);font-weight:bold;letter-spacing:3px;text-transform:uppercase}
-h1{font:700 clamp(52px,8vw,88px)/.95 Georgia,serif;color:var(--brown);margin:12px 0}
-.script{font-family:"Brush Script MT",cursive;color:var(--emerald);font-size:42px}
-.lead{font:italic 20px Georgia;color:#705846;max-width:570px}
-.actions{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
-.primary,.secondary{padding:13px 18px;border-radius:14px;cursor:pointer}
-.primary{background:var(--emerald);color:white}.secondary{background:var(--paper);color:var(--brown);border:1px solid var(--beige)}
-.desk{background:var(--paper);border:1px solid var(--beige);border-radius:30px;padding:28px;box-shadow:0 25px 55px #6b493529;transform:rotate(2deg)}
-.page{background:#fffdf8;border:1px solid #e0d3bd;padding:28px;min-height:330px;position:relative}
-.page:after{content:"✦";position:absolute;right:20px;top:14px;color:var(--teal)}
-.flower{font-size:72px;text-align:center}
-.section{padding:65px 3%}.section h2{text-align:center;font:700 42px Georgia;color:var(--brown);margin-bottom:8px}
-.section>p{text-align:center;color:#7d6958}
-.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:30px}
-.card{background:rgba(255,251,242,.92);border:1px solid var(--beige);border-radius:20px;padding:20px;box-shadow:0 12px 25px #6b49351a;transition:.2s}
-.card:hover{transform:translateY(-4px);border-color:var(--teal)}
-.icon{font-size:32px}.card h3{margin:12px 0 6px;color:var(--brown)}
-.feature{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:30px}
-.panel{background:var(--paper);border:1px solid var(--beige);border-radius:24px;padding:25px}
-.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:18px}
-.calhead,.calday{text-align:center;padding:10px;border-radius:9px}.calhead{font-size:12px;opacity:.65}.calday{background:#f5eee2;cursor:pointer}.calday:hover{background:#dfeee8}.calday.marked{outline:2px solid var(--teal)}
-textarea,input{width:100%;padding:12px;border:1px solid var(--beige);border-radius:12px;background:#fffdf8;color:var(--ink)}
-textarea{min-height:160px;resize:vertical}
-.games{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
-.game{background:var(--paper);border:1px solid var(--beige);border-radius:24px;padding:20px;text-align:center}
-.game .preview{height:125px;border-radius:16px;background:#e2eee9;display:grid;place-items:center;font-size:48px}
-.game button{margin-top:14px;width:100%}
-.game.hidden-game{display:none}
-.controls{display:flex;gap:10px;justify-content:center;margin-top:20px}
-#gameArea{display:none;margin-top:25px;text-align:center}
-.board{width:270px;height:270px;margin:15px auto;background:#e7f0ea;border:2px solid var(--emerald);border-radius:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:7px}
-.cell{background:var(--paper);border-radius:12px;font-size:35px;display:grid;place-items:center;cursor:pointer}
-footer{text-align:center;padding:60px 20px;color:#7b6755}
-@media(max-width:850px){.hero,.feature{grid-template-columns:1fr}.cards{grid-template-columns:repeat(2,1fr)}.games{grid-template-columns:1fr 1fr}nav{overflow:auto}.logo{min-width:130px}}
-@media(max-width:520px){.cards,.games{grid-template-columns:1fr}.hero{padding:40px 0}.section{padding:45px 0}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>rezzjournal</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="leaf">🍃</div>
-<div class="shell">
-<nav>
- <div class="logo">rezzjournal</div>
- <button onclick="go('journal')">Journal</button>
- <button onclick="go('fun')">Fun Zone</button>
- <button onclick="go('space')">My Space</button>
-</nav>
+  <div id="leaf">🍃</div>
 
-<header class="hero">
- <div>
-  <div class="eyebrow">digital journal • prototype</div>
-  <h1>write.<br>remember.<br><span style="color:var(--emerald)">grow.</span></h1>
-  <p class="lead">A cozy little space for your thoughts, tiny memories, goals — and a little fun when you need a break.</p>
-  <div class="actions"><button class="primary" onclick="go('journal')">🌿 Start journaling</button><button class="secondary" onclick="go('fun')">🎮 Explore Fun Zone</button></div>
- </div>
- <div class="desk"><div class="page"><div class="flower">🌿</div><div class="script">rezzjournal</div><h2>September 2026</h2><p>“Small steps still count.”</p><hr><p>Today I want to remember...</p><div style="height:55px;border-bottom:1px dashed var(--beige)"></div></div></div>
-</header>
+  <div class="shell">
+    <nav>
+      <div class="logo">rezzjournal</div>
+      <button onclick="go('journal')">Journal</button>
+      <button onclick="go('fun')">Fun Zone</button>
+      <button onclick="go('photo')">Photobooth</button>
+      <button onclick="go('space')">My Space</button>
+    </nav>
 
-<section id="journal" class="section">
- <h2>Your journal garden</h2><p>Pick a page and make it yours.</p>
- <div class="cards">
-  <div class="card"><div class="icon">📅</div><h3>Calendar</h3><p>Tap a date and write.</p><button class="secondary" onclick="document.getElementById('calendarPanel').scrollIntoView()">Open</button></div>
-  <div class="card"><div class="icon">🎯</div><h3>Goals</h3><p>Small goals, gentle progress.</p><button class="secondary" onclick="alert('Goals page — coming next 🌱')">Open</button></div>
-  <div class="card"><div class="icon">🌱</div><h3>Habits</h3><p>Build your little routine.</p><button class="secondary" onclick="alert('Habit tracker — coming next 🌱')">Open</button></div>
-  <div class="card"><div class="icon">🌙</div><h3>Mood</h3><p>Check in with yourself.</p><button class="secondary" onclick="alert('Mood tracker — coming next 🌿')">Open</button></div>
-  <div class="card"><div class="icon">🤎</div><h3>Gratitude</h3><p>Three good little things.</p><button class="secondary" onclick="alert('Gratitude page — coming next 🤎')">Open</button></div>
-  <div class="card"><div class="icon">✨</div><h3>Reflection</h3><p>Look back and grow.</p><button class="secondary" onclick="alert('Reflection page — coming next ✨')">Open</button></div>
-  <div class="card"><div class="icon">📸</div><h3>Memories</h3><p>Keep tiny moments close.</p><button class="secondary" onclick="alert('Memories page — coming next 📸')">Open</button></div>
-  <div class="card"><div class="icon">💭</div><h3>Quotes</h3><p>Save words you love.</p><button class="secondary" onclick="alert('Quotes page — coming next 💭')">Open</button></div>
- </div>
- <div id="calendarPanel" class="feature">
-  <div class="panel"><h2 style="text-align:left;font-size:30px">September 2026</h2><div id="cal" class="calendar"></div></div>
-  <div class="panel"><h2 id="dateTitle" style="text-align:left;font-size:30px">September 2</h2><p>Dear journal...</p><textarea id="entry" placeholder="Write whatever is on your mind 🌿"></textarea><br><br><button class="primary" onclick="saveEntry()">Save entry</button></div>
- </div>
-</section>
+    <!-- HERO -->
+    <header class="hero">
+      <div>
+        <div class="eyebrow">digital journal • prototype</div>
+        <h1>write.<br>remember.<br><span style="color:var(--emerald)">grow.</span></h1>
+        <p class="lead">A cozy little space for your thoughts, tiny memories, goals — and a little fun when you need a break.</p>
+        <div class="actions">
+          <button class="primary" onclick="go('journal')">🌿 Start journaling</button>
+          <button class="secondary" onclick="go('fun')">🎮 Explore Fun Zone</button>
+        </div>
+      </div>
+      <div class="desk">
+        <div class="page">
+          <div class="flower">🌿</div>
+          <div class="script">rezzjournal</div>
+          <h2>September 2026</h2>
+          <p>“Small steps still count.”</p>
+          <hr>
+          <p>Today I want to remember...</p>
+          <div style="height:55px;border-bottom:1px dashed var(--beige)"></div>
+        </div>
+      </div>
+    </header>
 
-<section id="fun" class="section">
- <h2>Fun Zone 🎮</h2><p>Kamu yang menentukan game apa yang masuk ke rezzjournal.</p>
- <div class="games" id="games">
-  <div class="game" data-name="Memory"><div class="preview">🃏</div><h3>Memory Match</h3><p>Find the matching pairs.</p><button class="primary" onclick="memory()">PLAY</button></div>
-  <div class="game" data-name="Plant"><div class="preview">🌱</div><h3>Little Plant</h3><p>Take care of your tiny plant.</p><button class="primary" onclick="plant()">PLAY</button></div>
-  <div class="game" data-name="Tic"><div class="preview">⭕</div><h3>Mini Tic-Tac-Toe</h3><p>A quick little break.</p><button class="primary" onclick="tic()">PLAY</button></div>
- </div>
- <div id="gameArea" class="panel"></div>
-</section>
+    <!-- JOURNAL -->
+    <section id="journal" class="section">
+      <h2>Your journal garden</h2>
+      <p>Pick a page and make it yours.</p>
 
-<section id="space" class="section">
- <h2>My Space 🤎</h2><p>Your personal little corner.</p>
- <div class="feature">
-  <div class="panel"><h3>🌿 My Favorites</h3><p>Journal entries, quotes, games and stickers you love can live here.</p><button class="secondary" onclick="alert('Favorites system is ready for the next version.')">Explore</button></div>
-  <div class="panel"><h3>🍃 Leaf Points</h3><p style="font-size:32px;color:var(--emerald);margin:8px 0"><b id="points">0</b> LP</p><p>Play mini games to earn points and unlock journal decorations.</p></div>
- </div>
-</section>
-<footer>🌿 rezzjournal · write it · remember it · grow with it 🤎</footer>
-</div>
+      <div class="cards">
+        <div class="card">
+          <div class="icon">📅</div>
+          <h3>Calendar</h3>
+          <p>Tap a date and write.</p>
+          <button class="secondary" onclick="openTool('calendar')">Open</button>
+        </div>
+        <div class="card">
+          <div class="icon">🎯</div>
+          <h3>Goals</h3>
+          <p>Small goals, gentle progress.</p>
+          <button class="secondary" onclick="openTool('goals')">Open</button>
+        </div>
+        <div class="card">
+          <div class="icon">🌱</div>
+          <h3>Habits</h3>
+          <p>Build your little routine.</p>
+          <button class="secondary" onclick="openTool('habits')">Open</button>
+        </div>
+        <div class="card">
+          <div class="icon">🌙</div>
+          <h3>Mood</h3>
+          <p>Check in with yourself.</p>
+          <button class="secondary" onclick="openTool('mood')">Open</button>
+        </div>
+        <div class="card">
+          <div class="icon">🤎</div>
+          <h3>Gratitude</h3>
+          <p>Three good little things.</p>
+          <button class="secondary" onclick="openTool('gratitude')">Open</button>
+        </div>
+        <div class="card">
+          <div class="icon">✨</div>
+          <h3>Reflection</h3>
+          <p>Look back and grow.</p>
+          <button class="secondary" onclick="openTool('reflection')">Open</button>
+        </div>
+        <div class="card">
+          <div class="icon">📸</div>
+          <h3>Memories</h3>
+          <p>Keep tiny moments close.</p>
+          <button class="secondary" onclick="openTool('memories')">Open</button>
+        </div>
+        <div class="card">
+          <div class="icon">💭</div>
+          <h3>Quotes</h3>
+          <p>Save words you love.</p>
+          <button class="secondary" onclick="openTool('quotes')">Open</button>
+        </div>
+      </div>
 
-<script>
-const leaf=document.getElementById('leaf');
-document.addEventListener('mousemove',e=>{leaf.style.display='block';leaf.style.left=e.clientX+10+'px';leaf.style.top=e.clientY+10+'px'});
-function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
-const cal=document.getElementById('cal');let current=2;
-['M','T','W','T','F','S','S'].forEach(x=>{let e=document.createElement('div');e.className='calhead';e.textContent=x;cal.appendChild(e)});
-let first=(new Date(2026,8,1).getDay()+6)%7;for(let i=0;i<first;i++)cal.appendChild(document.createElement('div'));
-for(let d=1;d<=30;d++){let b=document.createElement('button');b.className='calday'+(d===2?' marked':'');b.textContent=d;b.onclick=()=>selectDay(d);cal.appendChild(b)}
-function selectDay(d){current=d;document.getElementById('dateTitle').textContent='September '+d;document.getElementById('entry').value=localStorage.getItem('rz-'+d)||'';document.querySelectorAll('.calday').forEach(x=>x.classList.remove('marked'));event.target.classList.add('marked')}
-function saveEntry(){localStorage.setItem('rz-'+current,document.getElementById('entry').value);alert('Entry saved 🌿');location.reload()}
-let points=Number(localStorage.getItem('rz-points')||0);document.getElementById('points').textContent=points;
-function addPoint(n=5){points+=n;localStorage.setItem('rz-points',points);document.getElementById('points').textContent=points}
-function memory(){let area=document.getElementById('gameArea');area.style.display='block';area.innerHTML='<h2>Memory Match 🃏</h2><p>Find the two matching leaves.</p><div class="board" id="memoryBoard"></div>';let vals=['🌿','🌿','🤎','🤎','🌱','🌱'];vals.sort(()=>Math.random()-.5);let open=[];vals.forEach(v=>{let c=document.createElement('button');c.className='cell';c.textContent='?';c.onclick=()=>{if(open.length<2&&c.textContent==='?'){c.textContent=v;open.push(c);if(open.length===2){setTimeout(()=>{if(open[0].textContent===open[1].textContent){addPoint(10)}else open.forEach(x=>x.textContent='?');open=[]},550)}}};document.getElementById('memoryBoard').appendChild(c)})}
-function plant(){let area=document.getElementById('gameArea');area.style.display='block';area.innerHTML='<h2>Little Plant 🌱</h2><div style="font-size:90px" id="plant">🌱</div><p id="plantText">Your plant is waiting.</p><div class="controls"><button class="primary" onclick="water()">💧 Water</button><button class="secondary" onclick="care()">☀️ Give sunlight</button></div>';window.plantState=0}
-function water(){plantState=Math.min(4,plantState+1);document.getElementById('plant').textContent=['🌱','🌿','🪴','🌷','🌳'][plantState];document.getElementById('plantText').textContent='Your little plant grew!';addPoint(3)}
-function care(){document.getElementById('plantText').textContent='It got some sunshine ☀️';addPoint(2)}
-function tic(){let area=document.getElementById('gameArea');area.style.display='block';area.innerHTML='<h2>Mini Tic-Tac-Toe ⭕</h2><div class="board" id="ticBoard"></div><p id="ticText">Your turn: X</p>';let cells=Array(9).fill(''),turn='X';cells.forEach((_,i)=>{let b=document.createElement('button');b.className='cell';b.onclick=()=>{if(!cells[i]){cells[i]=turn;b.textContent=turn;turn=turn==='X'?'O':'X';document.getElementById('ticText').textContent='Your turn: '+turn;checkTic(cells)}};document.getElementById('ticBoard').appendChild(b)})}
-function checkTic(c){let w=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]].find(a=>c[a[0]]&&c[a[0]]===c[a[1]]&&c[a[1]]===c[a[2]]);if(w){document.getElementById('ticText').textContent=c[w[0]]+' wins! 🌿';addPoint(10)}else if(c.every(Boolean))document.getElementById('ticText').textContent='Draw 🤎'}
-</script>
-</body></html>
+      <!-- Calendar -->
+      <div id="tool-calendar" class="tool-panel">
+        <div class="feature">
+          <div class="panel">
+            <h2 style="font-size:28px;text-align:left">September 2026</h2>
+            <div id="cal" class="calendar"></div>
+          </div>
+          <div class="panel">
+            <h2 id="dateTitle" style="font-size:28px;text-align:left">September 2</h2>
+            <p>Dear journal...</p>
+            <textarea id="entry" placeholder="Write whatever is on your mind 🌿"></textarea>
+            <div class="row" style="margin-top:14px">
+              <button class="primary" onclick="saveEntry()">Save entry</button>
+              <button class="secondary" onclick="clearEntry()">Clear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Goals -->
+      <div id="tool-goals" class="tool-panel">
+        <div class="panel">
+          <h2 style="font-size:28px;text-align:left">🎯 Goals</h2>
+          <p>Tulis goal kecil yang ingin kamu capai.</p>
+          <div class="row">
+            <input id="goalInput" placeholder="Contoh: Minum air 8 gelas hari ini">
+            <button class="primary" onclick="addGoal()" style="flex:0 0 auto">Add</button>
+          </div>
+          <div id="goalList" class="list"></div>
+        </div>
+      </div>
+
+      <!-- Habits -->
+      <div id="tool-habits" class="tool-panel">
+        <div class="panel">
+          <h2 style="font-size:28px;text-align:left">🌱 Habits</h2>
+          <p>Centang habit yang sudah kamu lakukan hari ini.</p>
+          <div class="row">
+            <input id="habitInput" placeholder="Contoh: Baca 10 menit">
+            <button class="primary" onclick="addHabit()" style="flex:0 0 auto">Add</button>
+          </div>
+          <div id="habitList" class="list"></div>
+        </div>
+      </div>
+
+      <!-- Mood -->
+      <div id="tool-mood" class="tool-panel">
+        <div class="panel">
+          <h2 style="font-size:28px;text-align:left">🌙 Mood Check-in</h2>
+          <p>Bagaimana perasaanmu hari ini?</p>
+          <div class="mood-btns" id="moodBtns">
+            <button class="mood-btn" data-mood="😊">😊</button>
+            <button class="mood-btn" data-mood="😌">😌</button>
+            <button class="mood-btn" data-mood="😐">😐</button>
+            <button class="mood-btn" data-mood="😔">😔</button>
+            <button class="mood-btn" data-mood="😤">😤</button>
+            <button class="mood-btn" data-mood="😴">😴</button>
+          </div>
+          <textarea id="moodNote" placeholder="Kenapa merasa seperti itu? (opsional)" style="min-height:100px"></textarea>
+          <div class="row" style="margin-top:14px">
+            <button class="primary" onclick="saveMood()">Save mood</button>
+          </div>
+          <div id="moodHistory" class="list" style="margin-top:18px"></div>
+        </div>
+      </div>
+
+      <!-- Gratitude -->
+      <div id="tool-gratitude" class="tool-panel">
+        <div class="panel">
+          <h2 style="font-size:28px;text-align:left">🤎 Gratitude</h2>
+          <p>Tulis 3 hal kecil yang kamu syukuri hari ini.</p>
+          <input id="grat1" placeholder="1. ..." style="margin-bottom:8px">
+          <input id="grat2" placeholder="2. ..." style="margin-bottom:8px">
+          <input id="grat3" placeholder="3. ..." style="margin-bottom:8px">
+          <button class="primary" onclick="saveGratitude()">Save gratitude</button>
+          <div id="gratHistory" class="list" style="margin-top:18px"></div>
+        </div>
+      </div>
+
+      <!-- Reflection -->
+      <div id="tool-reflection" class="tool-panel">
+        <div class="panel">
+          <h2 style="font-size:28px;text-align:left">✨ Reflection</h2>
+          <p>Apa yang kamu pelajari hari ini / minggu ini?</p>
+          <textarea id="reflectText" placeholder="Hari ini aku belajar bahwa..."></textarea>
+          <div class="row" style="margin-top:14px">
+            <button class="primary" onclick="saveReflection()">Save reflection</button>
+          </div>
+          <div id="reflectHistory" class="list" style="margin-top:18px"></div>
+        </div>
+      </div>
+
+      <!-- Memories -->
+      <div id="tool-memories" class="tool-panel">
+        <div class="panel">
+          <h2 style="font-size:28px;text-align:left">📸 Memories</h2>
+          <p>Simpan momen kecil yang ingin kamu ingat.</p>
+          <input id="memTitle" placeholder="Judul momen" style="margin-bottom:8px">
+          <textarea id="memText" placeholder="Ceritakan sedikit tentang momennya..." style="min-height:100px"></textarea>
+          <div class="row" style="margin-top:14px">
+            <button class="primary" onclick="addMemory()">Save memory</button>
+          </div>
+          <div id="memList" class="list" style="margin-top:18px"></div>
+        </div>
+      </div>
+
+      <!-- Quotes -->
+      <div id="tool-quotes" class="tool-panel">
+        <div class="panel">
+          <h2 style="font-size:28px;text-align:left">💭 Quotes</h2>
+          <p>Simpan kata-kata yang kamu suka.</p>
+          <textarea id="quoteText" placeholder="Kutipannya..." style="min-height:90px"></textarea>
+          <input id="quoteAuthor" placeholder="Penulis / sumber (opsional)" style="margin:8px 0">
+          <button class="primary" onclick="addQuote()">Save quote</button>
+          <div id="quoteList" class="list" style="margin-top:18px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FUN ZONE -->
+    <section id="fun" class="section">
+      <h2>Fun Zone 🎮</h2>
+      <p>9 mini games · main & kumpulin Leaf Points</p>
+
+      <div class="music-bar" id="musicBar">
+        <button class="music-btn" id="btnMusic" onclick="toggleMusic()" title="Play / Pause musik">
+          <span id="musicIcon">🎵</span>
+          <span id="musicLabel">Musik OFF</span>
+        </button>
+        <input type="range" id="musicVolume" min="0" max="100" value="35" oninput="setMusicVolume(this.value)" title="Volume">
+        <span class="music-vol-label" id="volLabel">35%</span>
+      </div>
+
+      <div class="games" id="games">
+        <div class="game">
+          <div class="preview">🃏</div>
+          <h3>Memory Match</h3>
+          <p>Find matching pairs</p>
+          <button class="primary" onclick="startGame('memory')">PLAY</button>
+        </div>
+        <div class="game">
+          <div class="preview">🌱</div>
+          <h3>Little Plant</h3>
+          <p>Grow your plant</p>
+          <button class="primary" onclick="startGame('plant')">PLAY</button>
+        </div>
+        <div class="game">
+          <div class="preview">⭕</div>
+          <h3>Tic-Tac-Toe</h3>
+          <p>Quick classic break</p>
+          <button class="primary" onclick="startGame('tic')">PLAY</button>
+        </div>
+        <div class="game">
+          <div class="preview">✊</div>
+          <h3>Rock Paper Scissors</h3>
+          <p>Best of luck</p>
+          <button class="primary" onclick="startGame('rps')">PLAY</button>
+        </div>
+        <div class="game">
+          <div class="preview">🍃</div>
+          <h3>Catch the Leaf</h3>
+          <p>Click falling leaves</p>
+          <button class="primary" onclick="startGame('catch')">PLAY</button>
+        </div>
+        <div class="game">
+          <div class="preview">🎨</div>
+          <h3>Color Match</h3>
+          <p>Match the color name</p>
+          <button class="primary" onclick="startGame('color')">PLAY</button>
+        </div>
+        <div class="game">
+          <div class="preview">🔢</div>
+          <h3>Number Guess</h3>
+          <p>Guess 1–50</p>
+          <button class="primary" onclick="startGame('guess')">PLAY</button>
+        </div>
+        <div class="game">
+          <div class="preview">🧘</div>
+          <h3>Breathing</h3>
+          <p>Calm breathing exercise</p>
+          <button class="primary" onclick="startGame('breathe')">PLAY</button>
+        </div>
+        <div class="game">
+          <div class="preview">🧩</div>
+          <h3>Word Scramble</h3>
+          <p>Unscramble cozy words</p>
+          <button class="primary" onclick="startGame('scramble')">PLAY</button>
+        </div>
+      </div>
+
+      <div id="gameArea" class="panel" style="display:none;margin-top:25px"></div>
+    </section>
+
+    <!-- PHOTOBOOTH -->
+    <section id="photo" class="section">
+      <h2>Photobooth 📸</h2>
+      <p>Ambil foto, kasih filter & sticker, simpan ke Memories.</p>
+
+      <div class="feature">
+        <div class="panel" style="text-align:center">
+          <div class="photo-wrap">
+            <video id="cam" autoplay playsinline muted></video>
+            <canvas id="photoCanvas" style="display:none"></canvas>
+            <img id="photoPreview" style="display:none;max-width:100%;border-radius:16px">
+            <div id="stickerLayer" class="sticker-layer"></div>
+          </div>
+
+          <div class="row" style="margin-top:16px;justify-content:center">
+            <button class="primary" id="btnStartCam" onclick="startCamera()">Buka Kamera</button>
+            <button class="secondary" id="btnSnap" onclick="takePhoto()" disabled>📸 Ambil Foto</button>
+            <button class="secondary" id="btnRetake" onclick="retakePhoto()" style="display:none">Ulangi</button>
+          </div>
+
+          <div class="filters" style="margin-top:18px">
+            <p style="margin-bottom:8px;color:#7d6958">Filter</p>
+            <div class="filter-btns">
+              <button class="secondary filter-btn active" data-filter="none" onclick="setFilter('none')">Normal</button>
+              <button class="secondary filter-btn" data-filter="warm" onclick="setFilter('warm')">Warm</button>
+              <button class="secondary filter-btn" data-filter="cool" onclick="setFilter('cool')">Cool</button>
+              <button class="secondary filter-btn" data-filter="soft" onclick="setFilter('soft')">Soft</button>
+              <button class="secondary filter-btn" data-filter="vintage" onclick="setFilter('vintage')">Vintage</button>
+            </div>
+          </div>
+
+          <div class="stickers" style="margin-top:18px">
+            <p style="margin-bottom:8px;color:#7d6958">Sticker (klik untuk taruh)</p>
+            <div class="sticker-btns">
+              <button class="sticker-pick" onclick="addSticker('🌿')">🌿</button>
+              <button class="sticker-pick" onclick="addSticker('🤎')">🤎</button>
+              <button class="sticker-pick" onclick="addSticker('✨')">✨</button>
+              <button class="sticker-pick" onclick="addSticker('🍃')">🍃</button>
+              <button class="sticker-pick" onclick="addSticker('🌸')">🌸</button>
+              <button class="sticker-pick" onclick="addSticker('💫')">💫</button>
+              <button class="sticker-pick" onclick="addSticker('🦋')">🦋</button>
+              <button class="sticker-pick" onclick="addSticker('☁️')">☁️</button>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:20px;justify-content:center">
+            <button class="primary" id="btnSavePhoto" onclick="savePhotoToMemories()" style="display:none">💾 Simpan ke Memories</button>
+            <button class="secondary" id="btnDownload" onclick="downloadPhoto()" style="display:none">⬇️ Download</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>📸 Foto tersimpan</h3>
+          <p style="color:#7d6958;font-size:14px">Foto yang kamu simpan juga muncul di Memories.</p>
+          <div id="photoGallery" class="photo-gallery"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MY SPACE -->
+    <section id="space" class="section">
+      <h2>My Space 🤎</h2>
+      <p>Your personal little corner.</p>
+      <div class="feature">
+        <div class="panel">
+          <h3>🌿 My Favorites</h3>
+          <p>Kutipan & memory favoritmu muncul di sini.</p>
+          <div id="favList" class="list"></div>
+        </div>
+        <div class="panel">
+          <h3>🍃 Leaf Points</h3>
+          <p class="stat"><span id="points">0</span> LP</p>
+          <p>Main mini game untuk dapat poin. Poin bisa dipakai nanti untuk unlock dekorasi journal.</p>
+          <button class="secondary" onclick="go('fun')" style="margin-top:10px">Main game dulu →</button>
+        </div>
+      </div>
+    </section>
+
+    <footer>🌿 rezzjournal · write it · remember it · grow with it 🤎</footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
